@@ -1,5 +1,7 @@
 package com.nytimes.android.sample.activity;
 
+import static android.widget.Toast.makeText;
+
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
@@ -21,8 +23,6 @@ import java.util.List;
 import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
-
-import static android.widget.Toast.makeText;
 
 
 public class PersistingStoreActivity extends AppCompatActivity {
@@ -56,12 +56,16 @@ public class PersistingStoreActivity extends AppCompatActivity {
         BarCode awwRequest = new BarCode(RedditData.class.getSimpleName(), "aww");
 
         this.persistedStore
-                .get(awwRequest)
+                .fetch(awwRequest)
                 .flatMap(this::sanitizeData)
                 .toList()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(this::showPosts, throwable -> {
+                    makeText(PersistingStoreActivity.this,
+                            "Erro loading posts",
+                            Toast.LENGTH_SHORT)
+                            .show();
                 });
     }
 
